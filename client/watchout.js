@@ -5,20 +5,31 @@ var gameScore = 0;
 var highScore = 0;
 var myCollisions = 0;
 
-var stop = function() {
-  if (gameScore > highScore) {
+// var stop = function() {
+//   if (gameScore > highScore) {
+//     highScore = gameScore;
+//   }
+//   gameScore = 0;
+//   t.restart(function(elapsed) {
+//     gameScore = Math.round(elapsed);
+//   }, 150);
+// };
+
+// var t = d3.timer(function(elapsed) {
+//   gameScore = elapsed;
+  
+// }, 150);
+
+var increaser = setInterval(function () { 
+  gameScore++;
+}, 100);
+
+var clearer = function() {
+  if (highScore < gameScore) {
     highScore = gameScore;
   }
-  gameScore = 0;
-  t.restart(function(elapsed) {
-    gameScore = Math.round(elapsed);
-  }, 150);
-};
-
-var t = d3.timer(function(elapsed) {
-  gameScore = elapsed;
-  
-}, 150);
+  gameScore = 0
+}
 
 
 var dragstarted = function (d) {
@@ -27,7 +38,7 @@ var dragstarted = function (d) {
 
   
   d3.selectAll('.current > span')
-  .text(t);
+  .text(gameScore);
 };
 
 var dragged = function (d) {
@@ -111,8 +122,8 @@ var makePlayer = function() {
     return {
       x: 320,
       y: 230,
-      rx: 10,
-      ry: 10,
+      rx: 7,
+      ry: 7,
       i: 0
     };
   });
@@ -159,7 +170,9 @@ svg.selectAll('circle')
   .attr('stroke', 'black')
   .attr('stroke-width', 3)
   .on('mouseover', function() {
-    stop();
+    increaser
+    clearer();
+    increaser
     myCollisions ++;
   })
   .transition()
