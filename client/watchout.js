@@ -1,10 +1,25 @@
 var svg = d3.select('svg');
 var h = 450;
 var w = 700;
+var gameScore = 0;
+var highScore = 0;
+var myCollisions = 0;
+
+var stop = function() {
+  if (gameScore > highScore) {
+    highScore = gameScore;
+  }
+  gameScore = 0;
+  t.restart(function(elapsed) {
+    gameScore = Math.round(elapsed);
+  }, 150);
+};
 
 var t = d3.timer(function(elapsed) {
-  // console.log(elapsed)
+  gameScore = elapsed;
+  
 }, 150);
+
 
 var dragstarted = function (d) {
   d3.event.sourceEvent.stopPropagation();
@@ -35,19 +50,39 @@ var drag = d3.behavior.drag()
 var updateScore = function() {
   return [0].map(function(val, index) {
     return {
-      text: 0
+      text: Math.round(gameScore),
+      myCollisions: myCollisions
     };
   });
 };
 
-d3.select('.scoreboard')
-.selectAll('.current > span')
-  .data(updateScore)
-  .enter()
-  .append(function(d) {
-    console.log(d);
-    return d.text;
-  }).call(updateScore);
+
+var update = function() {
+  // Update selection: Resize and position existing 
+  // DOM elements with data bound to them.
+  var selection = d3.selectAll('.current > span')
+    .data(updateScore)
+    .text(function(d) {
+      return d.text;
+    });
+
+  var nSelection = d3.selectAll('.highscore > span')
+    .data(updateScore)
+    .text(function(d) {
+      if ( d.text < highScore) {
+        return highScore;
+      }
+      return d.text;
+    });
+
+  var nSelection = d3.selectAll('.collisions > span')
+    .data(updateScore)
+    .text(function(d) {
+      return d.myCollisions;
+    });
+};
+setInterval(update);
+
 
 
 var makeCircles = function () {
@@ -123,6 +158,10 @@ svg.selectAll('circle')
   .attr('fill', '#0FF1C3')
   .attr('stroke', 'black')
   .attr('stroke-width', 3)
+  .on('mouseover', function() {
+    stop();
+    myCollisions ++;
+  })
   .transition()
   .each('end', function () {
     moveCircles();
@@ -131,118 +170,5 @@ svg.selectAll('circle')
 
 
 
-
-
-
-
-
-
-
-
-
-
-// // start slingin' some d3 here.
-// var svg = d3.select('.board').append('svg')
-//   .attr('width', '1400')
-//   .attr('height', '600')
-//   .attr('fill', 'black');
-
-// var rect = svg.append('rect')
-//   .attr('x', 150)
-//   .attr('y', 150)
-//   .attr('width', 1000)
-//   .attr('height', 500)
-//   .attr('fill', '#d3d3d3')
-//   .on(mouseenter, )
-
-
-// console.log(curentscore.select('current > span'))
-
-// var circlesObj = [{
-//   id: 1, r: 10
-// }, {
-//   id: 2, r: 10
-// }, {
-//   id: 3, r: 10
-// }, {
-//   id: 4, r: 10
-// }, {
-//   id: 5, r: 10
-// }, {
-//   id: 6, r: 10
-// }, {
-//   id: 7, r: 10
-// }, {
-//   id: 8, r: 10
-// }, {
-//   id: 9, r: 10
-// }, {
-//   id: 10, r: 10
-// }];
-
-// var ellipse = svg.selectAll('ellipse');
-
-// var circle = svg.selectAll('circle');
-
-
-// var slide = function() {
-//   var circle = d3.selectAll('circle');
-//   (function repeat() {
-//     circle = circle.transition()
-//       .attr('cx', function() { return (Math.random() * 900 + 200); })
-//       .attr('cy', function() { return (Math.random() * 400 + 200); })
-//       .transition()
-//       .duration(1000)
-//       .each('end', repeat);
-//   })();
-// };
-
-// var eWidth = 650;
-// var eHeight = 400;
-
-
-// var make = function (data) {
-//   circle
-//     .data(data, function (d) { return d.id; })
-//     .enter().append('circle')
-//     .attr('cy', function() { return (Math.random() * 400 + 200); })
-//     .attr('fill', 'blue')
-//     .attr('cx', function() { return (Math.random() * 400 + 200); })
-//     .attr('r', 10)
-//     .each(slide);
-// };
-
-
-
-
-// make(circlesObj);
-
-
-
-// // var started = function() {
-// //   var ellipse = d3.select(this).classed('dragging', true);
-
-// //   d3.event.on('drag', dragged).on('end', ended);
-
-// //   var dragged = function(d) {
-// //     ellipse.raise().attr('cx', d.x = d3.event.x).attr('cy', d.y = d3.event.y);
-// //   };
-// //   var ended = function() {
-// //     ellipse.classed('dragging', false);
-// //   };
-// // };
-
-// // setInterval(function() {
-// //   update();
-// // }, 1000);
-
-
-
-// // var update = function() {
-// //   circle
-// //     .transition()
-// //     .duration(1000)
-// //     .attr('cy', function() { return (Math.random() * 400 + 200); })
-// //     .attr('cx', function() { return (Math.random() * 400 + 200); });
-// // };
-
+//if any cy or cx +10 for any enemy === the x,y +10 for the player
+//gameScore = 0 
