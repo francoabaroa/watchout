@@ -10,36 +10,69 @@ var rect = svg.append('rect')
   .attr('width', 1000)
   .attr('height', 500)
   .attr('fill', '#d3d3d3');
+ 
 
-var enemyMaker = function (n) {
-  for (var i = 0; i < n; i++) {
-    svg.append('circle')
-    .attr('cx', (Math.random() * 750) + 200)
-    .attr('cy', (Math.random() * 750) + 200)
-    .attr('r', 10)
-    .attr('fill', 'blue');
-  }
+var circlesObj = [{
+  id: 1, r: 10
+}, {
+  id: 2, r: 10
+}, {
+  id: 3, r: 10
+}, {
+  id: 4, r: 10
+}, {
+  id: 5, r: 10
+}, {
+  id: 6, r: 10
+}, {
+  id: 7, r: 10
+}, {
+  id: 8, r: 10
+}, {
+  id: 9, r: 10
+}, {
+  id: 10, r: 10
+}];
+
+var circle = svg.selectAll('circle');
+
+var slide = function() {
+  var circle = d3.select(this);
+  (function repeat() {
+    circle = circle.transition()
+        .attr('cx', function() { return (Math.random() * 900 + 200); })
+        .attr('cy', function() { return (Math.random() * 400 + 200); })
+      .transition()
+      .duration(1000)
+        .each('end', repeat);
+  })();
 };
 
 
-d3.select('.board').select('svg').select('rect')
-  .data([4, 8, 15, 16, 23, 42])
+var make = function (data) {
+  circle
+  .data(data, function (d) { return d.id; })
   .enter().append('circle')
-    .attr('cx', 500 * Math.random())
-    .attr('cy', 500 * Math.random())
-    .attr('r', 10)
-    .attr('fill', 'blue');
-
-var circle = svg.append('circle')
-  .attr('cx', 400)
-  .attr('cy', 400)
+  .attr('cy', function() { return (Math.random() * 400 + 200); })
+  .attr('fill', 'blue')
+  .attr('cx', function() { return (Math.random() * 400 + 200); })
   .attr('r', 10)
-  .attr('fill', 'blue');
+  .each(slide);
+};
+
+make(circlesObj);
+
+// setInterval(function() {
+//   update();
+// }, 1000);
 
 
 
-var inter = setInterval(function() {
-  enemyMaker(10);
-}, 1000);
+// var update = function() {
+//   circle
+//     .transition()
+//     .duration(1000)
+//     .attr('cy', function() { return (Math.random() * 400 + 200); })
+//     .attr('cx', function() { return (Math.random() * 400 + 200); });
+// };
 
-enemyMaker(10);
