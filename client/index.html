@@ -2,6 +2,8 @@
 <html>
   <head>
     <link rel='stylesheet' type='text/css' href='styles.css'>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
   <body>
     <div class="scoreboard">
@@ -9,8 +11,15 @@
       <div class="highscore">High score: <span>0</span></div>
       <div class="current">Current score: <span>0</span></div>
       <div class="collisions">Collisions: <span>0</span></div>
+
     </div>
-    <div class="board"><div class="mouse"></div></div>
+
+    <svg width="700" height="450" fill="red"> 
+    <rect width="700" height="450" fill="#BADA55" stroke="black" stroke-witdh="10"> </rect>
+    </svg>
+    <div class="board">
+      <div class="mouse"></div>
+    </div>
     <script src="lib/d3.js" charset="utf-8"></script>
     <script src='watchout.js'></script>
   </body>
