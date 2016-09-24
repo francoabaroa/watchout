@@ -2,9 +2,17 @@ var svg = d3.select('svg');
 var h = 450;
 var w = 700;
 
+var t = d3.timer(function(elapsed) {
+  // console.log(elapsed)
+}, 150);
+
 var dragstarted = function (d) {
   d3.event.sourceEvent.stopPropagation();
   d3.select(this).classed('dragging', true);
+
+  
+  d3.selectAll('.current > span')
+  .text(t);
 };
 
 var dragged = function (d) {
@@ -15,6 +23,7 @@ var dragged = function (d) {
 
 var dragended = function (d) {
   d3.select(this).classed('dragging', false);
+  
 };
 
 var drag = d3.behavior.drag()
@@ -23,6 +32,22 @@ var drag = d3.behavior.drag()
   .on('drag', dragged)
   .on('dragend', dragended);
 
+var updateScore = function() {
+  return [0].map(function(val, index) {
+    return {
+      text: 0
+    };
+  });
+};
+
+d3.select('.scoreboard')
+.selectAll('.current > span')
+  .data(updateScore)
+  .enter()
+  .append(function(d) {
+    console.log(d);
+    return d.text;
+  }).call(updateScore);
 
 
 var makeCircles = function () {
