@@ -6,3 +6,14 @@ Feel free to use it if you like. */
   fill: red;
   stroke: brown;
 }
+
+.scoreboard{
+  font-size: 20px;
+  text-align: center;
+  vertical-align: top;
+  background-color: #666;
+  color:white;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  font-family: 'Lobster', cursive;
+}
