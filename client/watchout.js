@@ -4,41 +4,25 @@ var w = 700;
 var gameScore = 0;
 var highScore = 0;
 var myCollisions = 0;
+var current = d3.selectAll('.current > span');
 
-// var stop = function() {
-//   if (gameScore > highScore) {
-//     highScore = gameScore;
-//   }
-//   gameScore = 0;
-//   t.restart(function(elapsed) {
-//     gameScore = Math.round(elapsed);
-//   }, 150);
-// };
 
-// var t = d3.timer(function(elapsed) {
-//   gameScore = elapsed;
-  
-// }, 150);
-
-var increaser = setInterval(function () { 
+var increaser = function() {
   gameScore++;
-}, 100);
+};
 
 var clearer = function() {
   if (highScore < gameScore) {
     highScore = gameScore;
   }
-  gameScore = 0
-}
+  gameScore = 0;
+};
 
 
 var dragstarted = function (d) {
   d3.event.sourceEvent.stopPropagation();
   d3.select(this).classed('dragging', true);
-
   
-  d3.selectAll('.current > span')
-  .text(gameScore);
 };
 
 var dragged = function (d) {
@@ -49,7 +33,6 @@ var dragged = function (d) {
 
 var dragended = function (d) {
   d3.select(this).classed('dragging', false);
-  
 };
 
 var drag = d3.behavior.drag()
@@ -58,7 +41,7 @@ var drag = d3.behavior.drag()
   .on('drag', dragged)
   .on('dragend', dragended);
 
-var updateScore = function() {
+var dataScore = function() {
   return [0].map(function(val, index) {
     return {
       text: Math.round(gameScore),
@@ -69,16 +52,14 @@ var updateScore = function() {
 
 
 var update = function() {
-  // Update selection: Resize and position existing 
-  // DOM elements with data bound to them.
-  var selection = d3.selectAll('.current > span')
-    .data(updateScore)
+  var selection = current
+    .data(dataScore)
     .text(function(d) {
       return d.text;
     });
 
   var nSelection = d3.selectAll('.highscore > span')
-    .data(updateScore)
+    .data(dataScore)
     .text(function(d) {
       if ( d.text < highScore) {
         return highScore;
@@ -87,14 +68,12 @@ var update = function() {
     });
 
   var nSelection = d3.selectAll('.collisions > span')
-    .data(updateScore)
-    .text(function(d) {
-      return d.myCollisions;
-    });
+      .data(dataScore)
+      .text(function(d) {
+        return d.myCollisions;
+      });
 };
 setInterval(update);
-
-
 
 var makeCircles = function () {
   return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(function (val, index) {
@@ -109,7 +88,8 @@ var makeCircles = function () {
 var moveCircles = function () {
   svg.selectAll('circle')
   .transition()
-  .duration(800)
+  .duration(1400)
+  .ease('elastic')
   .attr('cx', function(d, i) { return (Math.random() * w + 50 + i); })
   .attr('cy', function(d, i) { return (Math.random() * h + 50 + i); })
   .each('end', function () {
@@ -152,6 +132,13 @@ svg.selectAll('ellipse')
   )
   .attr('stroke-width', '3' 
   )
+  .on('mousedown', function() {
+    setty = setInterval(increaser, 150);
+  })
+  .on('mouseup', function() {
+    clearer();
+    clearInterval(setty);
+  })
   .call(drag);
 
   
@@ -165,23 +152,21 @@ svg.selectAll('circle')
   .attr('cy', function(d) {
     return d.y;
   })
-  .attr('r', 10)
+  .attr('r', 20)
   .attr('fill', '#0FF1C3')
   .attr('stroke', 'black')
   .attr('stroke-width', 3)
   .on('mouseover', function() {
-    increaser
     clearer();
-    increaser
-    myCollisions ++;
+    d3.select('rect').
+    style('fill', 'red');
+  })
+  .on('mouseout', function() {
+    d3.select('rect').
+    transition().
+    style('fill', '#BADA55');
   })
   .transition()
   .each('end', function () {
     moveCircles();
   });
-
-
-
-
-//if any cy or cx +10 for any enemy === the x,y +10 for the player
-//gameScore = 0 
